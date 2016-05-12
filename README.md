@@ -1,2 +1,2 @@
-# textchat
+# Text Chat 
 TextChat Sample Project
