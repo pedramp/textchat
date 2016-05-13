@@ -21,6 +21,10 @@ var bodyParser = require('body-parser');
 var methodOverride = require('method-override');
 var engines = require("hogan-express");
 var route = require('./libs/route');
+var socket = require('./libs/socket');
+var server = require('http').Server(app);
+var io = require('socket.io')(server);
+
 
 app.set('view options', {layout: 'layout'});
 //app.locals.delimiters = '<% %>';
@@ -33,15 +37,40 @@ app.use(express.static(config.path.static_bower));
 app.disable('x-powered-by');
 app.use(bodyParser.urlencoded( config.body_parser ));
 //
-app.use(session({
+
+
+var cookieParser = require('cookie-parser')();
+var session = require('cookie-session')({
   cookie: { maxAge: config.session.cookieAge },
   resave: false,
   saveUninitialized: config.session.saveUninitialized, 
   store: new RedisStore(config.redis_client),
   secret: config.session.secret
-}));
+});
+
+/*app.use(session({
+  cookie: { maxAge: config.session.cookieAge },
+  resave: false,
+  saveUninitialized: config.session.saveUninitialized, 
+  store: new RedisStore(config.redis_client),
+  secret: config.session.secret
+}));*/
+
+app.use(cookieParser);
+app.use(session);
+io.use(function(socket, next) {
+    var req = socket.handshake;
+    var res = {};
+    cookieParser(req, res, function(err) {
+        if (err) return next(err);
+        session(req, res, next);
+    });
+});
 
 route(app, config);
-app.listen(config.port);
+socket(app, io, config);
+
+//app.listen(config.port); // without socketio
+server.listen(config.port); // socketio
 console.log('init port ' + config.port);
 

@@ -16,18 +16,13 @@ var messagesSchema = mongoose.Schema({
 
 messagesSchema.statics.getHistory = function(from, to, max, fn)
 {
-	Message.find({from:from, to:to}).sort({date:-1}).limit(max).exec(fn);
+	Message.find({'$or':[{from:from, to:to}, {from:to, to:from}]}).sort({date:1}).limit(max).exec(fn);
 }
 
 messagesSchema.statics.addNewMessage = function(from, to, msg, fn)
 {
 	if(fn == null)
 		fn = function(){};
-
-	var md5sum = crypto.createHash('md5');
-	var _u = md5sum.update(username).digest('hex').toString().toUpperCase();
-	var md5sum = crypto.createHash('md5');
-	var _p = md5sum.update(_u+'-'+password).digest('hex').toString().toUpperCase();
 
 	new Message({
 		from: from,

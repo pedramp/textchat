@@ -6,8 +6,9 @@ var crypto = require('crypto');
 
 var memberSchema = mongoose.Schema({
 	
-	username   : String,
-	password   : String, // email address
+	username   : { type: String, index: { unique: true } }, 
+	email      : String,
+	password   : String, 
 	nickname   : String,
 	last_login : {type:Date, default:null},
 	status     : {type:String, default:'offline'}
@@ -18,36 +19,51 @@ var memberSchema = mongoose.Schema({
 
 memberSchema.virtual('avatar').get(function () 
 {
-	var md5sum = crypto.createHash('md5').update( String(this.username).toLowerCase() ).digest('hex').toString().toLowerCase()
+	var md5sum = crypto.createHash('md5').update( String(this.email).toLowerCase() ).digest('hex').toString().toLowerCase()
 	return 'http://www.gravatar.com/avatar/'+md5sum+'.jpg?s=64&d=wavatar'
 });
+
 
 memberSchema.statics.getByUsernameAndPassword = function(username, password, fn)
 {
 	var md5sum = crypto.createHash('md5');
-	var _u = md5sum.update(username).digest('hex').toString().toUpperCase();
-	var md5sum = crypto.createHash('md5');
-	var _p = md5sum.update(_u+'-'+password).digest('hex').toString().toUpperCase();
+	var _u = md5sum.update( String(username) ).digest('hex').toString().toLowerCase();
+	var md5sumx = crypto.createHash('md5');
+	var _p = md5sumx.update(_u+'-'+String(password)).digest('hex').toString().toLowerCase();
 	
 	Member.findOne({username:username, password:_p}).exec(fn);
 }
 
 memberSchema.statics.changeStatus = function(username, newstatus, fn)
 {
-	Member.update({username:username}, {'$set':{status : newstatus}}, fn)
+	if(fn == null)
+		fn = function(){};
+
+	Member.update({username:username}, {'$set':{status : newstatus}}, fn);
 }
 
-memberSchema.statics.createNewMember = function(username, password, nickname, fn)
+memberSchema.statics.updateLoginDate = function(username)
+{
+	Member.update({username:username}, {'$set':{last_login : new Date()}}, function(err, data)
+	{
+		// done.
+	})
+}
+
+
+
+memberSchema.statics.createNewMember = function(username, password, nickname, email, fn)
 {
 	var md5sum = crypto.createHash('md5');
-	var _u = md5sum.update(username).digest('hex').toString().toUpperCase();
+	var _u = md5sum.update(String(username)).digest('hex').toString().toLowerCase();
 	var md5sum = crypto.createHash('md5');
-	var _p = md5sum.update(_u+'-'+password).digest('hex').toString().toUpperCase();
+	var _p = md5sum.update(_u+'-'+String(password)).digest('hex').toString().toLowerCase();
 
 	new Member({
+		email: email,
 		username: username,
 		password: _p,
-		nickname:nickname
+		nickname: nickname
 	}).save(fn)
 }
 

@@ -7,7 +7,7 @@
 
     <h4>Online Users</h4>
     <ul class="nav nav-pills nav-stacked" ng-controller="OnlineMembers as mm">
-      <li ng-repeat="member in mm.members"><a href="#" ng-click="newchat(member)">{{member.nickname}}</a></li>
+      <li ng-repeat="member in mm.members" class="{{member.disabled}}"><a href="#" ng-click="newchat(member)">{{member.nickname}}</a></li>
     </ul>
 
 
@@ -22,11 +22,26 @@
 <br>
     <div class="chat-container"  ng-controller="PrivateWindow as pw">
         
-        <ul class="pw-window" ng-repeat="window in pw.windows" id="pw-{{window.to}}">
-            <li ng-repeat="message in pw.messages[window.to]" ><a href="#">{{message.msg}}</a></li>
-        </ul>   
+        <div class="pw-window" ng-repeat="window in pw.windows" id="pw-{{window.to}}">
+            <div class="well" ng-repeat="message in pw.messages[window.to]" >
+              <h5>{{message.from}} - <span class="label label-default">{{message.date}}</span></h5>
+              {{message.msg}}</div>
+        
+
+        <hr>
+        <form class="form-inline form-message" id="form-{{window.to}}" ng-submit="pushNewMessage(window.to)">
+          <div class="form-group row">
+            <label for="message">Message</label>
+            <input type="text" class="form-control" id="message" placeholder="Message..." ng-model="inputText">
+          </div>
+          <button type="submit" class="btn btn-default">Send</button>
+        </form>
+
+         </div>  
 
     </div>
+
+
   </div>
 
 </div>

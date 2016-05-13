@@ -6,8 +6,10 @@
   angular.module('app').controller('OnlineMembers', OnlineMembers);
   angular.module('textChat.index', []);
 
-  var _whoami = 'username_me';
 
+  var onlineUsers = [];
+  var staticScopeMessages;
+  var staticHTTP;
   var messageArchive = {
     //'username' : [{date: new Date(), msg:'hi'}, {date: new Date(), msg:'by'}],
     //'username2' : [{date: new Date(), msg:'hi 222'}, {date: new Date(), msg:'by 222'},{date: new Date(), msg:'by 222'}]
@@ -21,6 +23,9 @@
 
   function activatePrivatechatWindow(username, $http)
   {
+    if($http == null)
+      $http = staticHTTP;
+
     for(var i=0; i<activePrivateChatWindows.length; i++)
     {
       if(activePrivateChatWindows[i].to == username)
@@ -37,11 +42,12 @@
       { 
         $http({
           method: 'GET',
-          url: '/api/v1/rest/message/history/from/'+_whoami+'/to/'+username
+          url: '/api/v1/rest/message/history/from/me/to/'+username
         }).then(function successCallback(response) 
         {
           if(response != null && response.data != null)
             messageArchive[username] = response.data;
+          gotoBottom();
 
         }.bind(this), function errorCallback(response) {
             messageArchive[username] = [];
@@ -55,7 +61,7 @@
   function PrivateWindow( $scope, $http) {
 
     var pw = this;
-
+    staticHTTP = $http;
     pw.windows = activePrivateChatWindows
 
     $scope.activeWindow = function(username)
@@ -64,6 +70,25 @@
     }
 
     pw.messages = messageArchive;
+
+
+
+
+
+    $scope.pushNewMessage = function(username)
+    {
+        if(this.inputText == '')
+          return
+
+        if(messageArchive[ username ] == null)
+          messageArchive[ username ] = [];
+
+        var d = { date: new Date(), msg:this.inputText, from:_whoami, to:username};
+        messageArchive[ username ].push(d)
+        this.inputText = '';
+        socket.emit('private', d);
+        gotoBottom();
+    }
 
     pw.sendMessage = function(message, username) {
       if(message && message !== '' && username) {
@@ -84,9 +109,12 @@
 
 function OnlineMembers($http, $scope) {
     var mm = this;
-    
+    onlineUsers = mm;
     $scope.newchat = function(member)
     {
+      if(member.username == _whoami)
+        return;
+
       var b = true;
       for(var i=0; i<activePrivateChatWindows.length; i++)
       {
@@ -104,22 +132,67 @@ function OnlineMembers($http, $scope) {
       //
       activatePrivatechatWindow(member.username, $http)
     };
-
-    mm.members = [
-        // {username:'username 1', nickname: 'nickname 1'},
-        // {username:'username 2', nickname: 'nickname 2'}
-      ];
+    staticScopeMessages = $scope;
+    mm.members = [];
       $http({
         method: 'GET',
         url: '/api/v1/rest/members/status/online'
       }).then(function successCallback(response) 
       {
         if(response != null && response.data != null)
+        {
           mm.members = response.data;
+          for(var i=0; i<mm.members.length; i++)
+          {
+            if(mm.members[i].username == _whoami)
+              mm.members[i].disabled = 'disabled'
+            else
+              mm.members[i].disabled = ''
+          }
+        }
+          
+
+          
+
       }.bind(this), function errorCallback(response) {
           // error
       });
   };
 
 
+
+
+  socket.on('private_', function(data) {
+
+      if( messageArchive[ data.from ] == null )
+        messageArchive[ data.from ] = [];
+      messageArchive[ data.from ].push(data);
+
+      // refresh scope
+      if(staticScopeMessages != null)
+        staticScopeMessages.$apply();
+
+      gotoBottom();
+    });
+
+    socket.on('members', function(data) {
+      onlineUsers.members = data;
+      onlineUsers.$apply();
+      for(var i=0; i<onlineUsers.members.length; i++)
+      {
+        if(onlineUsers.members[i].username == _whoami)
+          onlineUsers.members[i].disabled = 'disabled'
+        else
+          onlineUsers.members[i].disabled = ''
+      }
+    });
+
 })();
+
+
+
+
+function gotoBottom()
+{
+  $("html, body").animate({ scrollTop: $(document).height() }, "slow");
+}

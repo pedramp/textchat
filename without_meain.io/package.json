@@ -29,6 +29,9 @@
     "body-parser":"latest",
     "method-override":"latest",
     "connect-redis":"latest",
+    "socket.io":"latest",
+    "cookie-parser":"latest",
+    "cookie-session":"latest",
     "hogan-express":"latest"
   }
 }

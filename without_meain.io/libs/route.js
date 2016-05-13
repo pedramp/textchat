@@ -3,7 +3,6 @@ var auth = require('./auth');
 
 module.exports = function(app, config)
 {
-
 	// generate route
 	fs.readdirSync(config.path.controller).forEach(function(name){
 	  if(name.indexOf('.js') > 0)

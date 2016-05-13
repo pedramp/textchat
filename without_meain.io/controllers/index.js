@@ -2,19 +2,21 @@ var memberModel = require('../models/members');
 
 module.exports = {
 
-	index : function(req, res)
+
+	chat : function(req, res)
 	{
 		/**
-	     * @route:/
+	     * @route:/chat
 	     * @method:all
-	     * @restricted:false
+	     * @restricted:true
 	     */
 	    
 	    // memberModel.findOne({}, function(err, data)
 	    // {
 	    // 	console.log(err, data);
 	    // })
-	    res.render('index', {layout:'layout', pageTitle:'Index'})
+	 	
+	    res.render('index', {layout:'layout', pageTitle:'Index', port:config.port, whoami:req.session.member.username})
 	}
 
 
