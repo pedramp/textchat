@@ -28,6 +28,7 @@
     "express-session":"latest",
     "body-parser":"latest",
     "method-override":"latest",
-    "connect-redis":"latest"
+    "connect-redis":"latest",
+    "hogan-express":"latest"
   }
 }
