@@ -10,10 +10,10 @@ module.exports = {
 	     * @restricted:false
 	     */
 	    
-	    /*memberModel.findOne({}, function(err, data)
-	    {
-	    	console.log(err, data);
-	    })*/
+	    // memberModel.findOne({}, function(err, data)
+	    // {
+	    // 	console.log(err, data);
+	    // })
 	    res.render('index', {layout:'layout', pageTitle:'Index'})
 	}
 

@@ -51,12 +51,14 @@ memberSchema.statics.createNewMember = function(username, password, nickname, fn
 	}).save(fn)
 }
 
-memberSchema.statics.getOnlineMembers = function(max, fn)
+memberSchema.statics.getMembersByStatus = function(status,max, fn)
 {
 	if(max <= 0)
 		max = 1;
+	if(status == null)
+		status = 'online';
 
-	Member.find({status:'online'}).sort({last_login:-1}).limit(max).exec(fn)
+	Member.find({status:status}, {username:1, nickname:1, status:1}).sort({last_login:-1}).limit(max).exec(fn)
 }
 
 

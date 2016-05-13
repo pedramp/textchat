@@ -1,0 +1,29 @@
+{
+  "name": "text_chat",
+  "description": "text chat project",
+  "main": "index.js",
+  "authors": [
+    "Pedram"
+  ],
+  "license": "ISC",
+  "keywords": [
+    "text",
+    "chat"
+  ],
+  "homepage": "https://github.com/pedramp/textchat",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": "latest",
+    "angular": "latest",
+    "bootstrap": "latest",
+    "angular-route": "latest",
+    "angular-resource": "latest",
+    "angular-bootstrap": "latest"
+  }
+}

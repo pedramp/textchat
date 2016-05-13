@@ -22,12 +22,14 @@ var methodOverride = require('method-override');
 var engines = require("hogan-express");
 var route = require('./libs/route');
 
-
-app.set('view options', {defaultLayout: 'layout'});
+app.set('view options', {layout: 'layout'});
+//app.locals.delimiters = '<% %>';
+app.locals.delimiters = '[[ ]]';
 app.engine('html', engines);
 app.set('view engine', 'html');
-app.set('views', config.path.views);
+app.set('views', config.path.views+'/');
 app.use(express.static(config.path.static));
+app.use(express.static(config.path.static_bower));
 app.disable('x-powered-by');
 app.use(bodyParser.urlencoded( config.body_parser ));
 //

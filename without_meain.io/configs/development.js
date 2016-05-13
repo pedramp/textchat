@@ -25,5 +25,6 @@ module.exports = {
 		controller : path.resolve('.') + '/controllers',
 		views : path.resolve('.') + '/views',
 		static : path.resolve('.') + '/public',
+		static_bower : path.resolve('.') + '/bower_components',
 	}
 }
