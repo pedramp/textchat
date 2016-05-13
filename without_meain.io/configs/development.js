@@ -3,7 +3,11 @@ module.exports = {
 
 	port : 6363,
 	db : {
-		path : 'mongodb://localhost/text-chat' 
+		path : 'mongodb://localhost/text-chat',
+		opts : { 
+			db: { native_parser: true },
+			server: { auto_reconnect: false }
+		}
 	},
 	redis_client : {
 		host : '127.0.0.1',

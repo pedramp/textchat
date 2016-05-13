@@ -7,7 +7,7 @@ program
   .option('-p, --port <p>', 'webserver port')
   .parse(process.argv);
 
-var config = require('./configs/' + ( (program.evn != null)  ? program.evn : 'development' )  );
+config = require('./configs/' + ( (program.evn != null)  ? program.evn : 'development' )  );
 
 if(program.port != null)
 	config.port = parseInt(program.port);

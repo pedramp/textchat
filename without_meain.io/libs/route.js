@@ -1,9 +1,9 @@
 var fs = require('fs');
-
+var auth = require('./auth');
 
 module.exports = function(app, config)
 {
-	
+
 	// generate route
 	fs.readdirSync(config.path.controller).forEach(function(name){
 	  if(name.indexOf('.js') > 0)
@@ -49,7 +49,7 @@ module.exports = function(app, config)
 	          var middlewares = [];
 
 	          if(String(options.restricted) == 'true')
-	            middlewares.push(auth3.bind({options:options}));
+	            middlewares.push(auth.bind({options:options}));
 	            
 	          app[options.method[j]](options.route, middlewares, obj[key]);
 	        }
