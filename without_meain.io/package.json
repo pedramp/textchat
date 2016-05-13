@@ -1,0 +1,33 @@
+{
+  "name": "text_chat",
+  "version": "0.0.1",
+  "description": "text chat project",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/pedramp/textchat"
+  },
+  "keywords": [
+    "text","chat"
+  ],
+  "author": "Pedram",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/pedramp/textchat/issues"
+  },
+  "homepage": "https://github.com/pedramp/textchat",
+  "dependencies": {
+    "express" : "latest",
+    "mongoose-types" : "latest",
+    "redis": "latest",
+    "mongoose" : "latest",
+    "commander": "2.9.0",
+    "express-session":"latest",
+    "body-parser":"latest",
+    "method-override":"latest",
+    "connect-redis":"latest"
+  }
+}
