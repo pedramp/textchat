@@ -1,8 +1,12 @@
 # Text Chat 
-TextChat Sample Project
+TextChat Sample Project `v0.01`
 
 
 
+#Installation Requirements (latest versions is recommended)
+* nodejs installation  [nodejs.org](https://nodejs.org/en/)
+* Mongodb installation [mongodb.com](https://www.mongodb.com/download-center?jmp=nav#community)
+* Redis installation [redis.io](http://redis.io/download)
 
 #setup
 1. clone 
