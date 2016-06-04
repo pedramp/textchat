@@ -1,3 +1,8 @@
+/**
+* TextChat Project
+*/
+/*!*/
+
 var program = require('commander');
 
 
@@ -7,12 +12,17 @@ program
   .option('-p, --port <p>', 'webserver port')
   .parse(process.argv);
 
-config = require('./configs/' + ( (program.evn != null)  ? program.evn : 'development' )  );
 
-if(program.port != null)
+if(process.env.NODE_ENV !== null)
+  program.evn = String(process.env.NODE_ENV); // environment variable has more priority for me!
+
+global.config = require('./configs/' + ( (program.evn !== null)  ? program.evn : 'development' )  );
+
+// application post, default is 6363 
+if(program.port !== null)
 	config.port = parseInt(program.port);
 
-
+ 
 var express = require('express');
 var app = express();
 var session = require('express-session');
@@ -25,10 +35,13 @@ var socket = require('./libs/socket');
 var server = require('http').Server(app);
 var io = require('socket.io')(server);
 
-
+// setup default layout.html file
 app.set('view options', {layout: 'layout'});
-//app.locals.delimiters = '<% %>';
+
+// To avoid conflicts with Angular's template engine, I just replace {{}} signs in mustach template engine with [[]] characters
 app.locals.delimiters = '[[ ]]';
+
+// mt default template engine is hogan
 app.engine('html', engines);
 app.set('view engine', 'html');
 app.set('views', config.path.views+'/');
@@ -36,9 +49,9 @@ app.use(express.static(config.path.static));
 app.use(express.static(config.path.static_bower));
 app.disable('x-powered-by');
 app.use(bodyParser.urlencoded( config.body_parser ));
-//
 
 
+// setup coockie to store some authorization things
 var cookieParser = require('cookie-parser')();
 var session = require('cookie-session')({
   cookie: { maxAge: config.session.cookieAge },
@@ -48,16 +61,10 @@ var session = require('cookie-session')({
   secret: config.session.secret
 });
 
-/*app.use(session({
-  cookie: { maxAge: config.session.cookieAge },
-  resave: false,
-  saveUninitialized: config.session.saveUninitialized, 
-  store: new RedisStore(config.redis_client),
-  secret: config.session.secret
-}));*/
-
 app.use(cookieParser);
 app.use(session);
+
+// share Cookie with SocketIO package
 io.use(function(socket, next) {
     var req = socket.handshake;
     var res = {};
@@ -67,7 +74,10 @@ io.use(function(socket, next) {
     });
 });
 
+// setup my handmade router, this function just initiate before openning ports.
 route(app, config);
+
+// setup socketIO with my express instance 
 socket(app, io, config);
 
 //app.listen(config.port); // without socketio

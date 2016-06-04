@@ -1,14 +1,19 @@
+/**
+* Basic Configuration
+*/
+
 var path = require('path');
 module.exports = {
 
 	port : 6363,
 	db : {
-		path : 'mongodb://localhost/text-chat',
+		path : 'mongodb://localhost/text-chat', // mongodb databse 
 		opts : { 
 			db: { native_parser: true },
 			server: { auto_reconnect: false }
 		}
 	},
+	
 	redis_client : {
 		host : '127.0.0.1',
 		port : 6379,
@@ -21,6 +26,7 @@ module.exports = {
 	},
 	body_parser: { limit:'250mb', extended: false, parameterLimit: 10000 },
 
+	// expres settings
 	path : {
 		controller : path.resolve('.') + '/controllers',
 		views : path.resolve('.') + '/views',

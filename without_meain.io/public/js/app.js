@@ -23,12 +23,12 @@
 
   function activatePrivatechatWindow(username, $http)
   {
-    if($http == null)
+    if($http == null) // null OR undefined
       $http = staticHTTP;
 
     for(var i=0; i<activePrivateChatWindows.length; i++)
     {
-      if(activePrivateChatWindows[i].to == username)
+      if(activePrivateChatWindows[i].to === username)
         activePrivateChatWindows[i].active = 'active';
       else 
         activePrivateChatWindows[i].active = '';
@@ -38,18 +38,18 @@
       $('#pw-'+username).css('display', 'block');
 
 
-      if(firstTimeOpenNewWindow.indexOf(username) == -1)
+      if(firstTimeOpenNewWindow.indexOf(username) === -1)
       { 
         $http({
           method: 'GET',
           url: '/api/v1/rest/message/history/from/me/to/'+username
         }).then(function successCallback(response) 
         {
-          if(response != null && response.data != null)
+          if(response !== null && response.data !== null)
             messageArchive[username] = response.data;
           gotoBottom();
 
-        }.bind(this), function errorCallback(response) {
+        }, function errorCallback(response) {
             messageArchive[username] = [];
         });
       }
@@ -77,10 +77,10 @@
 
     $scope.pushNewMessage = function(username)
     {
-        if(this.inputText == '')
+        if(this.inputText === '')
           return
 
-        if(messageArchive[ username ] == null)
+        if(messageArchive[ username ] === null)
           messageArchive[ username ] = [];
 
         var d = { date: new Date(), msg:this.inputText, from:_whoami, to:username};
@@ -112,13 +112,13 @@ function OnlineMembers($http, $scope) {
     onlineUsers = mm;
     $scope.newchat = function(member)
     {
-      if(member.username == _whoami)
+      if(member.username === _whoami)
         return;
 
       var b = true;
       for(var i=0; i<activePrivateChatWindows.length; i++)
       {
-        if(activePrivateChatWindows[i].to == member.username)
+        if(activePrivateChatWindows[i].to === member.username)
           b = false;
       }
       if(b)
@@ -139,12 +139,12 @@ function OnlineMembers($http, $scope) {
         url: '/api/v1/rest/members/status/online'
       }).then(function successCallback(response) 
       {
-        if(response != null && response.data != null)
+        if(response !== null && response.data !== null)
         {
           mm.members = response.data;
           for(var i=0; i<mm.members.length; i++)
           {
-            if(mm.members[i].username == _whoami)
+            if(mm.members[i].username === _whoami)
               mm.members[i].disabled = 'disabled'
             else
               mm.members[i].disabled = ''
@@ -154,7 +154,7 @@ function OnlineMembers($http, $scope) {
 
           
 
-      }.bind(this), function errorCallback(response) {
+      }, function errorCallback(response) {
           // error
       });
   };
@@ -164,12 +164,12 @@ function OnlineMembers($http, $scope) {
 
   socket.on('private_', function(data) {
 
-      if( messageArchive[ data.from ] == null )
+      if( messageArchive[ data.from ] == null ) // null or undefined
         messageArchive[ data.from ] = [];
       messageArchive[ data.from ].push(data);
 
       // refresh scope
-      if(staticScopeMessages != null)
+      if(staticScopeMessages !== null)
         staticScopeMessages.$apply();
 
       gotoBottom();
@@ -177,10 +177,10 @@ function OnlineMembers($http, $scope) {
 
     socket.on('members', function(data) {
       onlineUsers.members = data;
-      onlineUsers.$apply();
+      //onlineUsers.$apply();
       for(var i=0; i<onlineUsers.members.length; i++)
       {
-        if(onlineUsers.members[i].username == _whoami)
+        if(onlineUsers.members[i].username === _whoami)
           onlineUsers.members[i].disabled = 'disabled'
         else
           onlineUsers.members[i].disabled = ''

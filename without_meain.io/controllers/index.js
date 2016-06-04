@@ -1,8 +1,19 @@
+/**
+* Index module.
+*/
+/*!*/
+
 var memberModel = require('../models/members');
 
 module.exports = {
 
-
+	/**
+	 * to render `/chat/` page
+	 * @param  {Object}   req
+	 * @param  {Object}   res
+	 * @param  {Function} next
+	 * @return {String} rendered html of page.
+	 */
 	chat : function(req, res)
 	{
 		/**

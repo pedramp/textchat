@@ -1,3 +1,7 @@
+/**
+* Messages module.
+*/
+/*!*/
 var db = require('./db');
 var mongoose = require('mongoose');
 
@@ -14,14 +18,29 @@ var messagesSchema = mongoose.Schema({
 });
 
 
+/**
+ * get history of messages between two users
+ * @param  {String}   from username
+ * @param  {String}   to   username
+ * @param  {Number}   max  limist in result
+ * @param  {Function} fn   Callback function
+ * @return {Array}        array of messages
+ */
 messagesSchema.statics.getHistory = function(from, to, max, fn)
 {
 	Message.find({'$or':[{from:from, to:to}, {from:to, to:from}]}).sort({date:1}).limit(max).exec(fn);
 }
 
+/**
+ * insert new message to database
+ * @param {String}   from from username
+ * @param {String}   to   to username
+ * @param {String}   msg  message 
+ * @param {Function} fn   callback function
+ */
 messagesSchema.statics.addNewMessage = function(from, to, msg, fn)
 {
-	if(fn == null)
+	if(fn === null)
 		fn = function(){};
 
 	new Message({
@@ -33,6 +52,7 @@ messagesSchema.statics.addNewMessage = function(from, to, msg, fn)
 }
 
 
+// init message 
 var Message = db.model('message', messagesSchema);
 module.exports = Message;
 

@@ -1,7 +1,14 @@
+/**
+* API class.
+*/
+/*!*/
+
+
 var memberModel = require('../models/members');
 var messagesModel = require('../models/messages');
 
 module.exports = {
+
 
 	newMessage : function(req, res)
 	{
@@ -14,6 +21,13 @@ module.exports = {
 	    res.json({test:'ok'})
 	},
 
+	/**
+	 * just to change user's `status` in databse.
+	 * @param  {Object}   req
+	 * @param  {Object}   res
+	 * @param  {Function} next
+	 * @return {Object}  an object like this: {error:false}. this result is static and it's not depends on user's status or other parameters
+	 */
 	iamOnlineNow : function(req, res)
 	{
 		/**
@@ -26,6 +40,14 @@ module.exports = {
 	     res.json({error:false});
 	},
 	
+
+	/**
+	 * to authenticate user with its username and password
+	 * @param  {Object}   req
+	 * @param  {Object}   res
+	 * @param  {Function} next
+	 * @return {Object}  JSON result contains `error` parameter that is true or false. 
+	 */
 	authenticate : function(req, res)
 	{
 		/**
@@ -36,7 +58,7 @@ module.exports = {
 	    
 	    memberModel.getByUsernameAndPassword(req.body.username, req.body.password, function(err, data)
 	    {
-	    	if(err == null && data != null && data.username == req.body.username)
+	    	if(err === null && data !== null && data.username === req.body.username)
 	    	{
 	    		req.session.member = {username : req.body.username }
 	    		res.json({error:false, username: req.body.username});
@@ -51,6 +73,13 @@ module.exports = {
 	},
 
 
+	/**
+	 * get history of messages between two users
+	 * @param  {Object}   req
+	 * @param  {Object}   res
+	 * @param  {Function} next
+	 * @return {Array}  array of messages 
+	 */
 	getMessageHistory : function(req, res)
 	{
 		/**
@@ -61,7 +90,7 @@ module.exports = {
 	    messagesModel.getHistory(req.session.member.username, req.params.to, 200, function(err, data)
 	    {
 	    	var result = [];
-	    	if(err == null && data != null)
+	    	if(err === null && data !== null)
 	    	{
 	    		result = data;
 	    	}
@@ -75,7 +104,13 @@ module.exports = {
 	},
 
 
-
+	/**
+	 *  get list of online users,  100 limitation in result
+	 * @param  {Object}   req
+	 * @param  {Object}   res
+	 * @param  {Function} next
+	 * @return {Array} Array of online users.
+	 */
 	onlineMembers : function(req, res)
 	{
 		/**
@@ -87,7 +122,7 @@ module.exports = {
 	    memberModel.getMembersByStatus('online', 100, function(err, data)
 	    {
 	    	var result = [];
-	    	if(err == null && data != null)
+	    	if(err === null && data !== null)
 	    	{
 	    		result = data;
 	    	}
